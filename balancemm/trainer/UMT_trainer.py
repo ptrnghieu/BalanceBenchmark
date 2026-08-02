@@ -21,7 +21,7 @@ import copy
 from ..utils.train_utils import get_checkpoint_files, get_newest_path
 import os.path as osp
 import yaml
-from models.avclassify_model import MultiModalParallel
+from ..models.avclassify_model import MultiModalParallel
 class UMTTrainer(BaseTrainer):
     def __init__(self,fabric, method_dict: dict = {}, para_dict : dict = {}, args = {}):
         super(UMTTrainer,self).__init__(fabric,**para_dict)

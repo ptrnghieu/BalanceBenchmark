@@ -5,7 +5,7 @@ import subprocess
 import torch.nn as nn
 
 from lightning.fabric.loggers import CSVLogger, TensorBoardLogger
-from lightning.pytorch.loggers import WandbLogger
+from lightning.pytorch.loggers import WandbLogger, CometLogger
 
 import random
 import numpy as np
@@ -29,6 +29,8 @@ def choose_logger(logger_name: str, log_dir, project: Optional[str] = None, comm
         return logger
     elif logger_name == "wandb":
         return WandbLogger(project = project, save_dir = log_dir, notes = comment, *args, **kwargs)
+    elif logger_name == "comet":
+        return CometLogger(project_name = project, save_dir = log_dir, *args, **kwargs)
     else:
         raise ValueError(f"`logger={logger_name}` is not a valid option.")
 

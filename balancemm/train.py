@@ -41,15 +41,17 @@ def train_and_test(args: dict):
     loggers = [logger]
     logger.setLevel(logging.DEBUG)
     logger.info(dict_args)
-    for tb_logger in loggers_online:
-        if isinstance(tb_logger, L.fabric.loggers.CSVLogger):
+    tb_logger = None
+    for lg in loggers_online:
+        if isinstance(lg, L.fabric.loggers.CSVLogger):
             os.makedirs(os.path.join(log_dir, 'csv'), exist_ok=True)
-        elif isinstance(tb_logger, L.fabric.loggers.TensorBoardLogger):
+        elif isinstance(lg, L.fabric.loggers.TensorBoardLogger):
             os.makedirs(os.path.join(log_dir, 'tensorboard'), exist_ok=True)
-        elif isinstance(tb_logger, L.pytorch.loggers.wandb.WandbLogger):
+            tb_logger = lg
+        elif isinstance(lg, L.pytorch.loggers.wandb.WandbLogger):
             os.makedirs(os.path.join(log_dir, 'wandb'), exist_ok=True)
-    if tb_logger:
-        tb_logger.log_hyperparams(dict_args)
+    for lg in loggers_online:
+        lg.log_hyperparams(dict_args)
     fabric = Fabric(**(args.fabric),
                     loggers = loggers,
                     )
@@ -57,10 +59,6 @@ def train_and_test(args: dict):
         fabric.print('set float32 matmul precision to high')
         torch.set_float32_matmul_precision('high')
     device = args.Main_config['device']
-    # if device == '':
-    #     device = torch.device('cpu')
-    # else:
-    #     device = torch.device('cuda:' + args.Main_config['device'])
     if device == '':
         model = create_model(args.model)
     else:
@@ -77,7 +75,8 @@ def train_and_test(args: dict):
     optimizer = create_optimizer(model, args.train['optimizer'], args.train['parameter'])
     scheduler = create_scheduler(optimizer, args.train['scheduler'])
     trainer = create_trainer(fabric, args.Main_config, args.trainer, args, logger,tb_logger)
-        
+    trainer.online_loggers = loggers_online
+
     start_time = datetime.now()
     if args.trainer['name'] == 'GBlendingTrainer':
         temp_model = create_model(args.model)
@@ -177,15 +176,17 @@ def linear_probe_eval(args: dict):
     loggers = [logger]
     logger.setLevel(logging.DEBUG)
     logger.info(dict_args)
-    for tb_logger in loggers_online:
-        if isinstance(tb_logger, L.fabric.loggers.CSVLogger):
+    tb_logger = None
+    for lg in loggers_online:
+        if isinstance(lg, L.fabric.loggers.CSVLogger):
             os.makedirs(os.path.join(log_dir, 'csv'), exist_ok=True)
-        elif isinstance(tb_logger, L.fabric.loggers.TensorBoardLogger):
+        elif isinstance(lg, L.fabric.loggers.TensorBoardLogger):
             os.makedirs(os.path.join(log_dir, 'tensorboard'), exist_ok=True)
-        elif isinstance(tb_logger, L.pytorch.loggers.wandb.WandbLogger):
+            tb_logger = lg
+        elif isinstance(lg, L.pytorch.loggers.wandb.WandbLogger):
             os.makedirs(os.path.join(log_dir, 'wandb'), exist_ok=True)
-    if tb_logger:
-        tb_logger.log_hyperparams(dict_args)
+    for lg in loggers_online:
+        lg.log_hyperparams(dict_args)
     fabric = Fabric(**(args.fabric),
                     loggers = loggers,
                     )
@@ -209,7 +210,8 @@ def linear_probe_eval(args: dict):
     optimizer = create_optimizer(new_head, args.train['optimizer'], args.train['parameter'])
     scheduler = create_scheduler(optimizer, args.train['scheduler'])
     trainer = create_trainer(fabric, args.Main_config, args.trainer, args, logger,tb_logger)
-        
+    trainer.online_loggers = loggers_online
+
     start_time = datetime.now()
     if args.trainer['name'] == 'GBlendingTrainer':
         temp_model = create_model(args.model)

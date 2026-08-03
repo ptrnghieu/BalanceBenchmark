@@ -329,7 +329,7 @@ class AGMTrainer(BaseTrainer):
                 if self.max_epochs is not None and self.current_epoch >= self.max_epochs:
                     self.should_stop = True
         tb = {}
-        if tb_logger:
+        if isinstance(tb_logger, TensorBoardLogger):
             for modality in model.modalitys:
                 tb[modality] = TensorBoardLogger(root_dir=tb_logger.root_dir, name=f'tensorboard',default_hp_metric=False,version=0,sub_dir = f'{modality}')
         Shapley = {}
@@ -344,6 +344,7 @@ class AGMTrainer(BaseTrainer):
                 if tb_logger:
                     tb_logger.log_hyperparams({"epochs": self.current_epoch})
                     tb_logger.log_metrics({"train_scores":self.train_scores})
+                self._log_online({"train_scores": self.train_scores}, step=self.current_epoch)
                 output_info = ''
                 info = ''
                 ##parse the Metrics
@@ -356,31 +357,38 @@ class AGMTrainer(BaseTrainer):
                             tag = 'train_acc'
                             if modality == 'output':
                                 output_info += f"train_acc: {valid_acc[modality]}"
-                                tb_logger.log_metrics({
-                                    tag: valid_acc[modality]
-                                }, step=self.current_epoch)
+                                if tb_logger:
+                                    tb_logger.log_metrics({
+                                        tag: valid_acc[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({tag: valid_acc[modality]}, step=self.current_epoch)
                             else:
                                 info += f", acc_{modality}: {valid_acc[modality]}"
-                                tb[modality].log_metrics({
-                                    tag: valid_acc[modality]
-                                }, step=self.current_epoch)
+                                if modality in tb:
+                                    tb[modality].log_metrics({
+                                        tag: valid_acc[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({f"{tag}_{modality}": valid_acc[modality]}, step=self.current_epoch)
                     if metircs == 'f1':
                         valid_f1 = Metrics_res[metircs]
                         for modality in sorted(valid_f1.keys()):
                             tag = "train_f1"
                             if modality == 'output':
                                 output_info += f", train_f1: {valid_f1[modality]}"
-                                tb_logger.log_metrics({
-                                    tag: valid_f1[modality]
-                                }, step=self.current_epoch)
+                                if tb_logger:
+                                    tb_logger.log_metrics({
+                                        tag: valid_f1[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({tag: valid_f1[modality]}, step=self.current_epoch)
                             else:
                                 info += f", f1_{modality}: {valid_f1[modality]}"
-                            
-                                tb[modality].log_metrics({
-                                    tag: valid_f1[modality]
-                                }, step=self.current_epoch)
+                                if modality in tb:
+                                    tb[modality].log_metrics({
+                                        tag: valid_f1[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({f"{tag}_{modality}": valid_f1[modality]}, step=self.current_epoch)
                 info = output_info+ ', ' + info
-                    
+
                 logger.info(info)
                 self.precision_calculator.ClearAll()
             if self.should_validate:
@@ -392,6 +400,7 @@ class AGMTrainer(BaseTrainer):
                     tb_logger.log_metrics({
                         'valid_loss': valid_loss,
                     }, step=self.current_epoch)
+                self._log_online({'valid_loss': valid_loss}, step=self.current_epoch)
                 # Shapley = Calculate_Shapley(self, model,val_loader,logger)
                 # for modality in modality_list:
                 #     tag = "Shapley_value"
@@ -406,31 +415,37 @@ class AGMTrainer(BaseTrainer):
                             tag = "valid_acc"
                             if modality == 'output':
                                 output_info += f"valid_acc: {valid_acc[modality]}"
-                                tb_logger.log_metrics({
-                                    tag: valid_acc[modality]
-                                }, step=self.current_epoch)
+                                if tb_logger:
+                                    tb_logger.log_metrics({
+                                        tag: valid_acc[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({tag: valid_acc[modality]}, step=self.current_epoch)
                             else:
                                 info += f", acc_{modality}: {valid_acc[modality]}"
-                            
-                                tb[modality].log_metrics({
-                                    tag: valid_acc[modality]
-                                }, step=self.current_epoch)
-                                
+                                if modality in tb:
+                                    tb[modality].log_metrics({
+                                        tag: valid_acc[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({f"{tag}_{modality}": valid_acc[modality]}, step=self.current_epoch)
+
                     if metircs == 'f1':
                         valid_f1 = Metrics_res[metircs]
                         for modality in sorted(valid_f1.keys()):
                             tag = "valid_f1"
                             if modality == 'output':
                                 output_info += f", valid_f1: {valid_f1[modality]}"
-                                tb_logger.log_metrics({
-                                    tag: valid_f1[modality]
-                                }, step=self.current_epoch)
+                                if tb_logger:
+                                    tb_logger.log_metrics({
+                                        tag: valid_f1[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({tag: valid_f1[modality]}, step=self.current_epoch)
                             else:
                                 info += f", f1_{modality}: {valid_f1[modality]}"
-                           
-                                tb[modality].log_metrics({
-                                    tag: valid_f1[modality]
-                                }, step=self.current_epoch)
+                                if modality in tb:
+                                    tb[modality].log_metrics({
+                                        tag: valid_f1[modality]
+                                    }, step=self.current_epoch)
+                                self._log_online({f"{tag}_{modality}": valid_f1[modality]}, step=self.current_epoch)
                 info = output_info+ ', ' + info
                     
                 logger.info(info)

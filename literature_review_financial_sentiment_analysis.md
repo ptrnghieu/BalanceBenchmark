@@ -2,9 +2,9 @@
 
 ## Tóm tắt
 
-Phân tích cảm xúc tài chính (Financial Sentiment Analysis – FSA) thường được hiểu là phân loại văn bản tài chính thành tích cực, tiêu cực hoặc trung lập. Bài tổng quan này lập luận rằng cách hiểu đó quá hẹp. FSA bao gồm nhiều bài toán khác nhau (phân loại, chấm điểm, theo khía cạnh, theo đối tượng, theo sự kiện), nhiều loại nhãn (cảm xúc văn bản, tâm lý nhà đầu tư, tác động kỳ vọng lên giá), nhiều nguồn dữ liệu và nhiều mục tiêu ứng dụng. Một mô hình tốt trên benchmark cảm xúc chưa chắc hữu ích cho dự báo tài chính. Khoảng cách này càng đáng chú ý ở thị trường mới nổi và ngôn ngữ ít tài nguyên như tiếng Việt. Bài khảo sát giai đoạn 2000 đến nay theo cấu trúc: nền tảng khái niệm, taxonomy các bài toán, tiến hóa phương pháp, dữ liệu–gán nhãn–đánh giá, ứng dụng, thách thức, rồi đi riêng vào FSA tiếng Việt.
+Phân tích cảm xúc tài chính (Financial Sentiment Analysis – FSA) thường được hiểu là phân loại văn bản tài chính thành tích cực, tiêu cực hoặc trung lập. Bài tổng quan này lập luận rằng cách hiểu đó quá hẹp. FSA gồm nhiều bài toán (phân loại, chấm điểm, theo khía cạnh, theo thực thể, theo sự kiện), nhiều loại nhãn (cảm xúc văn bản, tâm lý nhà đầu tư, tác động kỳ vọng lên giá), nhiều nguồn dữ liệu và nhiều mục tiêu ứng dụng. Một mô hình tốt trên benchmark cảm xúc chưa chắc hữu ích cho dự báo tài chính, và khoảng cách này càng rõ ở ngôn ngữ ít tài nguyên như tiếng Việt. Bài khảo sát giai đoạn 2000 đến 2026 theo cấu trúc: nền tảng khái niệm, taxonomy bài toán, tiến hóa phương pháp (đến LLM), dữ liệu–gán nhãn–đánh giá, ứng dụng, thách thức, rồi đi riêng vào FSA tiếng Việt, nơi tôi kiểm tra được năm công trình và chưa thấy benchmark công khai được chuẩn hóa.
 
-**Từ khóa:** phân tích cảm xúc, tài chính, taxonomy, FinBERT, mô hình ngôn ngữ lớn, tiếng Việt
+**Từ khóa:** phân tích cảm xúc, tài chính, taxonomy, FinBERT, mô hình ngôn ngữ lớn, tiếng Việt, PhoBERT
 
 ---
 
@@ -12,31 +12,44 @@ Phân tích cảm xúc tài chính (Financial Sentiment Analysis – FSA) thư�
 
 ### 1.1. Động lực và luận điểm trung tâm
 
-Thị trường tài chính phản ứng với thông tin, và phần lớn thông tin đó ở dạng văn bản. Từ những năm 2000, một nhánh nghiên cứu chuyển văn bản thành chỉ báo định lượng về cảm xúc để kiểm tra mối liên hệ với lợi suất, biến động và khối lượng giao dịch.
-
-Luận điểm trung tâm của bài như sau:
+Thị trường tài chính phản ứng với thông tin, và phần lớn thông tin đó ở dạng văn bản. Từ những năm 2000, một nhánh nghiên cứu chuyển văn bản thành chỉ báo định lượng về cảm xúc để kiểm tra mối liên hệ với lợi suất, biến động và khối lượng giao dịch. Luận điểm trung tâm của bài:
 
 > FSA không chỉ là phân loại positive/negative/neutral. Nó gồm nhiều bài toán, nhiều loại nhãn, nhiều nguồn dữ liệu và nhiều mục tiêu downstream. Một mô hình tốt trên benchmark cảm xúc chưa chắc hữu ích cho dự báo tài chính, và khoảng cách này càng rõ ở ngôn ngữ ít tài nguyên như tiếng Việt.
 
-Phân biệt xuyên suốt bài là giữa **cảm xúc của văn bản**, **tâm lý nhà đầu tư** và **tác động kỳ vọng lên giá** (xem Mục 2).
-
 ### 1.2. Câu hỏi nghiên cứu
 
-| RQ | Câu hỏi | Mục tương ứng |
+| RQ | Câu hỏi | Mục |
 |---|---|---|
 | RQ1 | FSA đã phát triển thế nào về bài toán, phương pháp và mô hình? | 3, 4 |
 | RQ2 | Những tập dữ liệu, cách gán nhãn và giao thức đánh giá nào được dùng? | 5 |
-| RQ3 | Cảm xúc tài chính được dùng trong các ứng dụng downstream ra sao? | 6 |
-| RQ4 | Những thách thức và khoảng trống nghiên cứu chính là gì? | 7, 9 |
+| RQ3 | Cảm xúc tài chính được dùng trong ứng dụng downstream ra sao? | 6 |
+| RQ4 | Thách thức và khoảng trống nghiên cứu chính là gì? | 7, 9 |
 | RQ5 | FSA tiếng Việt đang ở mức nào so với nghiên cứu toàn cầu? | 8 |
 
 ### 1.3. Các khảo sát liên quan
 
-Kearney và Liu (2014) tập trung vào cảm xúc văn bản trong tài chính; Loughran và McDonald (2016) khảo sát phân tích văn bản trong kế toán và tài chính; Xing và cs. (2018) khảo sát dự báo tài chính dựa trên ngôn ngữ tự nhiên; Nie và cs. (2024) khảo sát LLM cho các ứng dụng tài chính, trong đó phân tích cảm xúc là một mảng. Bài này khác ở chỗ tổ chức theo bài toán và loại nhãn, và dành riêng một phần cho tiếng Việt.
+Kearney và Liu (2014) khảo sát cảm xúc văn bản trong tài chính; Loughran và McDonald (2016) khảo sát phân tích văn bản trong kế toán–tài chính; Xing và cs. (2018) khảo sát dự báo tài chính dựa trên ngôn ngữ tự nhiên; Nie và cs. (2024) khảo sát LLM cho ứng dụng tài chính. Bài này khác ở chỗ tổ chức theo bài toán và loại nhãn, và dành riêng một phần cho tiếng Việt.
 
-### 1.4. Phương pháp chọn tài liệu và giới hạn
+### 1.4. Phương pháp chọn tài liệu, mức xác minh và giới hạn
 
-Tài liệu được tìm qua tìm kiếm web theo tên công trình và chủ đề, rồi đối chiếu thông tin thư mục (tác giả, năm, tạp chí, trang) với trang kho lưu trữ hoặc cơ sở dữ liệu. Nhiều công trình chỉ được kiểm tra qua tóm tắt và trang thông tin, chưa đọc toàn văn. Các con số kết quả là số do tác giả công bố. **Đây chưa phải tổng quan hệ thống**: chưa có truy vấn xác định trước trên Scopus, Web of Science, IEEE Xplore, ACL Anthology hay ACM DL, chưa có tiêu chí đưa vào/loại ra, chưa có sơ đồ sàng lọc. Do đó bài có thể bỏ sót tài liệu, và các nhận định về "khoảng trống" chỉ có giá trị tương đối với tập tài liệu đã xem. Thời điểm chốt tìm kiếm là tháng 10/2026, nhưng phần lớn công trình về LLM trong bài thuộc giai đoạn 2023–2024; giai đoạn sau chưa được khảo sát và đó là hạn chế cần bổ sung. Bài ghi rõ công trình nào là bản thảo arXiv chưa được xác minh bình duyệt.
+**Quy trình thực tế.** Tôi không có quyền truy cập Scopus, Web of Science, IEEE Xplore hay ACM DL, nên bài **không phải tổng quan hệ thống kiểu PRISMA**. Việc tìm kiếm dùng tìm kiếm web, đối chiếu với arXiv, ACL Anthology, trang tạp chí (MDPI, VNUHCM, JCC) và Crossref. Nhật ký truy vấn:
+
+| Chủ đề | Từ khóa chính (tiếng Anh) |
+|---|---|
+| Khảo sát | financial sentiment analysis survey; textual analysis finance survey; LLM finance survey |
+| Từ điển và nền tảng | Loughran McDonald; Tetlock media pessimism; message boards sentiment |
+| Mô hình tiền huấn luyện | FinBERT (Araci; Yang); lexicons to transformers |
+| LLM | ChatGPT stock return; BloombergGPT; FinGPT; PIXIU/FinMA; FinBen; GPT-4 vs FinBERT; look-ahead bias |
+| Dữ liệu và gán nhãn | Financial PhraseBank; FiQA; entity-level corpus; annotator agreement |
+| Tiếng Việt | Vietnamese financial sentiment; PhoBERT stock news; VN-Index sentiment |
+
+**Tiêu chí áp dụng (không chính thức, không đếm số lượng):** đưa vào các công trình có thể xác minh thư mục, liên quan trực tiếp đến cảm xúc/văn bản tài chính hoặc là chuẩn tham chiếu của lĩnh vực; loại các trang tóm tắt, blog và bài không xác minh được tác giả. Tôi không lập sơ đồ sàng lọc vì không ghi số lượng ở từng bước.
+
+**Mức xác minh.**
+- *Nhóm A* (trích chi tiết từ trang bài hoặc bản HTML qua công cụ đọc trang; tôi không đọc trực tiếp PDF): Malo và cs. (2014), Araci (2019), Yang và cs. (2020), Nie và cs. (2024), Wu và cs. (2023), Xie và cs. (2023, 2024), Kirtac & Germano (2024), Shen & Zhang (2024), Vamvourellis & Mehta (2025), Li và cs. (2023), cùng các công trình tiếng Việt ở Mục 8.
+- *Nhóm B* (chỉ tóm tắt và kết quả tìm kiếm): Tetlock (2007), Loughran & McDonald (2011, 2016), Das & Chen (2007), Antweiler & Frank (2004), Bollen và cs. (2011), Ding và cs. (2015), Lopez-Lira & Tang (2023), Glasserman & Lin (2023), Kearney & Liu (2014), Xing và cs. (2018), Mishev và cs. (2020), Maia và cs. (2018), Yang và cs. (2023, FinGPT), Zhang và cs. (2023, Instruct-FinGPT).
+
+Số liệu là số do tác giả công bố. **Giới hạn:** (i) chưa có truy vấn trên các cơ sở dữ liệu trả phí; (ii) giai đoạn 2025–2026 chỉ được khảo sát qua một số tìm kiếm có mục tiêu, nên phần LLM gần đây chắc chắn chưa đầy đủ; (iii) các nhận định "chưa có công trình" chỉ đúng với tập tài liệu đã xem.
 
 ---
 
@@ -44,21 +57,17 @@ Tài liệu được tìm qua tìm kiếm web theo tên công trình và chủ �
 
 ### 2.1. Ba khái niệm cần tách biệt
 
-| Khái niệm | Câu hỏi | Ví dụ minh họa |
+| Khái niệm | Câu hỏi | Ví dụ |
 |---|---|---|
-| **Cảm xúc văn bản** (textual sentiment) | Văn bản thể hiện sắc thái gì? | "Doanh thu giảm mạnh" mang sắc thái tiêu cực |
-| **Tâm lý nhà đầu tư** (investor sentiment) | Nhà đầu tư lạc quan hay bi quan? | Chỉ số tâm lý tổng hợp từ nhiều nguồn |
-| **Tác động kỳ vọng lên giá** (expected market impact) | Thông tin tốt hay xấu cho giá? | Tin cắt giảm chi phí có thể tăng giá dù sắc thái trung tính |
+| **Cảm xúc văn bản** | Văn bản thể hiện sắc thái gì? | "Doanh thu giảm mạnh" mang sắc thái tiêu cực |
+| **Tâm lý nhà đầu tư** | Nhà đầu tư lạc quan hay bi quan? | Chỉ số tâm lý tổng hợp từ nhiều nguồn |
+| **Tác động kỳ vọng lên giá** | Thông tin tốt hay xấu cho giá? | Tin cắt giảm chi phí có thể tăng giá dù sắc thái trung tính |
 
-Ba khái niệm này không thể mặc định thay thế cho nhau. Chúng có quan hệ, nhưng một mô hình phân loại tốt khái niệm thứ nhất chưa chắc dự đoán được khái niệm thứ ba. Phân biệt này có ý nghĩa thực tế: Lopez-Lira và Tang (2023) yêu cầu mô hình đánh giá một tiêu đề là tốt, xấu hay trung lập **đối với giá cổ phiếu của công ty**, tức là nhắm vào khái niệm thứ ba chứ không chỉ sắc thái văn bản.
+Ba khái niệm không thể mặc định thay thế cho nhau. Phân biệt này thể hiện ngay trong các bộ nhãn: Financial PhraseBank yêu cầu người gán nhãn đánh giá "từ góc nhìn nhà đầu tư" (Malo và cs., 2014), còn Lopez-Lira & Tang (2023) yêu cầu mô hình đánh giá tiêu đề là tốt, xấu hay trung lập **đối với giá cổ phiếu của công ty**.
 
 ### 2.2. Cơ sở lý thuyết và bằng chứng ban đầu
 
-Cơ sở lý thuyết nằm ở tài chính hành vi: giá có thể bị ảnh hưởng bởi tâm lý nhà đầu tư, không chỉ bởi yếu tố cơ bản. Tetlock (2007) đo mức bi quan của truyền thông từ chuyên mục "Abreast of the Market" trên Wall Street Journal bằng phân tích thành phần chính, giai đoạn 1984–1999. Mức bi quan cao đi kèm áp lực giảm giá rồi giá hồi về mức cơ bản, còn mức bi quan cực đoan (cao hoặc thấp) đi kèm khối lượng giao dịch lớn. Tác giả diễn giải kết quả phù hợp với mô hình có nhà giao dịch nhiễu và nhà giao dịch thanh khoản, và không phù hợp với việc xem nội dung truyền thông chỉ là đại diện cho thông tin cơ bản mới.
-
-Antweiler và Frank (2004) phân tích hơn 1,5 triệu bài đăng trên bảng tin Yahoo! Finance, xét lợi suất, biến động, khối lượng và chênh lệch giá mua–bán. Các nguồn thứ cấp mô tả khả năng dự báo lợi suất là yếu; chi tiết này cần đối chiếu với bài gốc vì chưa truy cập toàn văn.
-
-Kearney và Liu (2014) tổng hợp rằng cảm xúc văn bản liên hệ với hành vi ở cấp cá nhân, doanh nghiệp và thị trường, đồng thời chỉ ra các điểm đồng thuận và còn tranh luận.
+Tetlock (2007) đo mức bi quan của truyền thông từ chuyên mục "Abreast of the Market" trên Wall Street Journal bằng phân tích thành phần chính, giai đoạn 1984–1999. Mức bi quan cao đi kèm áp lực giảm giá rồi giá hồi về mức cơ bản, còn mức bi quan cực đoan đi kèm khối lượng giao dịch lớn; tác giả diễn giải kết quả phù hợp với mô hình có nhà giao dịch nhiễu và thanh khoản, không phù hợp với việc xem nội dung truyền thông chỉ là đại diện cho thông tin cơ bản mới. Antweiler và Frank (2004) phân tích hơn 1,5 triệu bài đăng trên Yahoo! Finance; các nguồn thứ cấp mô tả khả năng dự báo lợi suất là yếu (cần đối chiếu bài gốc). Kearney và Liu (2014) tổng hợp rằng cảm xúc văn bản liên hệ với hành vi ở cấp cá nhân, doanh nghiệp và thị trường, đồng thời chỉ ra các điểm còn tranh luận.
 
 ---
 
@@ -66,82 +75,71 @@ Kearney và Liu (2014) tổng hợp rằng cảm xúc văn bản liên hệ vớ
 
 ### 3.1. Khung phân loại
 
-Phần lớn tổng quan sắp xếp theo phương pháp, nhưng câu hỏi trước tiên là FSA giải quyết những bài toán gì. Bảng dưới đây phân loại theo bài toán, kèm các công trình đã kiểm tra thư mục làm ví dụ.
-
-| Bài toán | Mục tiêu | Công trình ví dụ (đã kiểm tra) | Ghi chú |
+| Bài toán | Mục tiêu | Công trình ví dụ | Ghi chú |
 |---|---|---|---|
-| Phân loại cảm xúc ở mức câu/văn bản | Gán nhãn positive/negative/neutral | Malo và cs. (2014); Das & Chen (2007) | Das & Chen làm ở mức bài đăng; Malo ở mức câu/cụm từ |
-| Chấm điểm cảm xúc / cường độ | Cho điểm liên tục thay vì nhãn rời rạc | Araci (2019) báo cáo kết quả trên tác vụ chấm điểm của FiQA | Dạng hồi quy |
-| Chỉ số cảm xúc cấp văn bản, tổng hợp | Tạo thước đo cảm xúc từ nhiều văn bản | Tetlock (2007); Loughran & McDonald (2011) | Đo bằng đếm từ/thành phần chính |
-| Theo khía cạnh (ABSA) | Cảm xúc đối với một khía cạnh | FiQA (Maia và cs., 2018) nhắm đến aspect-based sentiment analysis | Chi tiết gán nhãn khía cạnh chưa xác minh từ toàn văn |
-| Theo đối tượng (target-dependent) | Cảm xúc hướng đến một thực thể cụ thể | Lopez-Lira & Tang (2023): đánh giá tiêu đề đối với giá cổ phiếu của một công ty | Gần với bài toán này nhưng nhãn là tác động, không thuần sắc thái |
-| Cảm xúc/tâm trạng chi tiết | Nhiều chiều tâm trạng thay vì phân cực | Bollen và cs. (2011): GPOMS với các chiều calm, alert, sure, vital, kind, happy | Dựa trên Twitter, không riêng văn bản tài chính |
-| Theo sự kiện | Thái độ/tác động gắn với sự kiện | Ding và cs. (2015): trích sự kiện từ tin tức để dự báo giá | Thiên về dự báo giá hơn là phân loại cảm xúc |
-| Lập trường (stance) | Lập trường đối với một chủ đề | Chưa có công trình nào được kiểm tra trong bài | Khoảng trống về bằng chứng, chưa kết luận là khoảng trống nghiên cứu |
+| Phân loại cảm xúc câu/văn bản | Nhãn positive/negative/neutral | Malo và cs. (2014); Das & Chen (2007); Yang và cs. (2020) | Malo: câu; Das & Chen: bài đăng |
+| Chấm điểm cảm xúc | Điểm liên tục | FiQA Task 1: điểm trong [−1, 1] cho tiêu đề và tweet (theo Araci, 2019) | Hồi quy |
+| Chỉ số cảm xúc tổng hợp | Thước đo từ nhiều văn bản | Tetlock (2007); Loughran & McDonald (2011) | Đếm từ / thành phần chính |
+| Theo khía cạnh (ABSA) | Cảm xúc theo khía cạnh | FiQA nhắm đến aspect-based sentiment (Maia và cs., 2018) | Chi tiết nhãn khía cạnh chưa xác minh |
+| Theo thực thể | Cảm xúc hướng đến thực thể | FinLin (Daudert, 2020): điểm cảm xúc và điểm liên quan theo thực thể, kèm đoạn văn làm bằng chứng, trên báo cáo, tin tức và StockTwits | Corpus ngành ô tô, ba tháng |
+| Cảm xúc chi tiết | Nhiều chiều tâm trạng | Bollen và cs. (2011): GPOMS (calm, alert, sure, vital, kind, happy) | Twitter, không riêng tài chính |
+| Theo sự kiện / dự báo từ văn bản | Tác động của sự kiện lên giá | Ding và cs. (2015); Lopez-Lira & Tang (2023) | Giao điểm giữa FSA và dự báo |
+| Lập trường (stance) | Lập trường với một chủ đề | Chưa có công trình trong tập đã xem | Khoảng trống về bằng chứng |
 
-Hai lưu ý:
-- Ranh giới giữa các hàng không cứng. Một công trình có thể thuộc nhiều hàng, và phần phân loại ở đây là cách đọc của tôi dựa trên tóm tắt.
-- Một số công trình (Ding và cs., 2015) nằm ở giao điểm giữa FSA và dự báo tài chính từ văn bản. Nên gọi chúng là *dự báo tài chính dựa trên văn bản* chứ không gọi là FSA thuần túy.
+Hai lưu ý: ranh giới giữa các hàng không cứng (phân loại là cách đọc của tôi); và các công trình dự báo giá từ văn bản (Ding và cs., 2015) nên gọi là dự báo tài chính dựa trên văn bản, không gọi là FSA thuần túy.
 
-### 3.2. Vì sao cần phân biệt: ví dụ minh họa
+### 3.2. Vì sao cần phân biệt
 
-Xét câu minh họa (do tôi đặt, không trích từ bộ dữ liệu nào): *"Công ty A báo lãi kỷ lục, trong khi công ty B thua lỗ nặng."*
+Xét câu minh họa (do tôi đặt): *"Công ty A báo lãi kỷ lục, trong khi công ty B thua lỗ nặng."* Phân loại cả câu có thể trả về trung lập; phân tích theo thực thể cho A tích cực, B tiêu cực. Tương tự, *"Doanh thu giảm nhưng biên lợi nhuận cải thiện đáng kể"* có nhãn phụ thuộc vào khía cạnh được chú ý.
 
-- Phân loại cả câu: kết quả có thể là trung lập vì có cả thông tin tốt và xấu.
-- Phân tích theo đối tượng: A tích cực, B tiêu cực.
-
-Đây là hai bài toán khác nhau dù dùng cùng một câu. Tương tự với câu *"Doanh thu giảm nhưng biên lợi nhuận cải thiện đáng kể"*: nhãn phụ thuộc vào khía cạnh mà người gán nhãn hoặc mô hình chú ý, nên cần cân nhắc ABSA hoặc cho phép bất đồng giữa người gán nhãn (xem Mục 5.3).
-
-Hệ quả cho tiếng Việt: tin tài chính thường nhắc nhiều doanh nghiệp và ngành trong cùng một bài, nên ABSA và target-dependent sentiment là hướng đáng quan tâm. Đây là suy luận của tôi, chưa có công trình tiếng Việt nào được kiểm tra để chứng minh.
+Một bằng chứng trực tiếp từ tiếng Việt: nhóm Tung và cs. (2021) thay tên riêng, địa danh, tên tổ chức và mã chứng khoán bằng token giữ chỗ trước khi phân loại tiêu đề (qua mô tả mã nguồn của họ). Cách này tránh học thuộc tên công ty nhưng cũng làm mất thông tin về thực thể; nó phù hợp với phân loại cấp tiêu đề và không phù hợp với bài toán theo thực thể. Tin tài chính tiếng Việt thường nhắc nhiều doanh nghiệp và ngành trong cùng bài, nên bài toán theo thực thể và khía cạnh là hướng đáng quan tâm; đây là suy luận của tôi.
 
 ---
 
 ## 4. Tiến hóa phương pháp
 
-### 4.1. Từ điển (lexicon-based)
+### 4.1. Từ điển
 
-Loughran và McDonald (2011) phân tích 50.115 hồ sơ 10-K của các công ty Mỹ giai đoạn 1994–2008, và thấy phần lớn từ mà từ điển Harvard xếp là tiêu cực không mang nghĩa tiêu cực trong ngữ cảnh báo cáo tài chính (ví dụ *liability, tax, board, vice*). Họ xây từ điển tài chính riêng (danh sách từ tiêu cực và năm danh mục sắc thái khác) và cho thấy thước đo dựa trên từ điển này liên hệ rõ hơn với lợi suất quanh ngày nộp báo cáo, khối lượng giao dịch, biến động, gian lận và điểm yếu trọng yếu. Ưu điểm của cách tiếp cận này là minh bạch, rẻ, dễ tái lập; nhược điểm là bỏ qua ngữ cảnh, phủ định và cấu trúc câu. Malo và cs. (2014) nhấn mạnh rằng cảm xúc của câu có thể khác cảm xúc của từng từ, và đề xuất mô hình cấu trúc cụm từ cùng một từ điển tài chính mở rộng.
+Loughran và McDonald (2011) phân tích 50.115 hồ sơ 10-K giai đoạn 1994–2008 và thấy phần lớn từ mà từ điển Harvard xếp là tiêu cực không mang nghĩa tiêu cực trong báo cáo tài chính (ví dụ *liability, tax, board, vice*). Họ xây từ điển tài chính riêng và cho thấy thước đo dựa trên đó liên hệ rõ hơn với lợi suất quanh ngày nộp báo cáo, khối lượng, biến động, gian lận và điểm yếu trọng yếu. Ưu điểm: minh bạch, rẻ, dễ tái lập. Nhược điểm: bỏ qua ngữ cảnh. Malo và cs. (2014) nhấn mạnh cảm xúc của câu có thể khác cảm xúc của từng từ.
 
-### 4.2. Học máy truyền thống
+### 4.2. Học máy truyền thống và học sâu
 
-Das và Chen (2007) kết hợp nhiều bộ phân loại bằng bỏ phiếu để phân loại bài đăng trên bảng tin chứng khoán. Họ báo cáo độ chính xác tương đương các bộ phân loại Bayes phổ biến nhưng ít dương tính giả hơn, và việc gộp thông điệp theo thời gian và theo cổ phiếu cải thiện chỉ số cảm xúc, nhất là khi có tiếng lóng và nhập nhằng.
+Das và Chen (2007) kết hợp nhiều bộ phân loại bằng bỏ phiếu cho bài đăng bảng tin; họ báo cáo độ chính xác tương đương bộ phân loại Bayes nhưng ít dương tính giả hơn. Ding và cs. (2015) trích sự kiện từ tin tức, dùng mạng tensor nơ-ron và CNN sâu, báo cáo cải thiện khoảng 6% so với baseline trên tin Reuters và Bloomberg. Xing và cs. (2018) tổng quan giai đoạn trước Transformer.
 
-### 4.3. Học sâu
+### 4.3. Mô hình tiền huấn luyện
 
-Ding và cs. (2015) trích sự kiện từ tin tức, biểu diễn bằng mạng tensor nơ-ron, rồi dùng mạng tích chập sâu để mô hình hóa ảnh hưởng ngắn và dài hạn lên giá. Họ báo cáo cải thiện khoảng 6% độ chính xác so với các baseline cho dự báo S&P 500 và cổ phiếu riêng lẻ, trên tin Reuters và Bloomberg. Như đã nêu ở Mục 3, công trình này là dự báo giá từ văn bản. Xing và cs. (2018) tổng quan nhóm nghiên cứu dự báo tài chính dựa trên ngôn ngữ tự nhiên ở giai đoạn trước khi Transformer phổ biến.
+Araci (2019) tiền huấn luyện tiếp BERT trên TRC2-financial (tập con của Reuters TRC2: 46.143 tài liệu, hơn 29 triệu từ), rồi tinh chỉnh. Trên Financial PhraseBank (4.845 câu), FinBERT đạt accuracy 0,86 và F1 0,84 (0,97 và 0,95 trên tập đồng thuận 100%), so với ULMFit 0,83/0,79. Trên FiQA (1.174 tiêu đề và tweet), MSE 0,07 và R² 0,55; tác giả lưu ý FinBERT đánh giá bằng kiểm định chéo 10 lần, các baseline dùng tập kiểm thử chính thức, nên so sánh không trực tiếp.
 
-### 4.4. Mô hình tiền huấn luyện (BERT và biến thể tài chính)
+Yang và cs. (2020) tiền huấn luyện một BERT khác (cũng tên FinBERT) từ đầu trên khoảng 4,9 tỷ token: báo cáo doanh nghiệp 10-K/10-Q (2,5 tỷ), bản ghi họp báo kết quả (1,3 tỷ) và báo cáo phân tích (1,1 tỷ). Mô hình được đánh giá trên Financial PhraseBank (4.840 câu), AnalystTone (10.000 câu) và FiQA (1.111 câu, chuyển thành nhị phân). Accuracy tốt nhất của FinBERT là 0,872, 0,887 và 0,844, so với BERT uncased 0,835, 0,850 và 0,730.
 
-Araci (2019) giới thiệu FinBERT, dựa trên BERT, xuất phát từ hai khó khăn là dữ liệu gán nhãn tài chính khan hiếm và từ vựng chuyên ngành. Tác giả báo cáo kết quả tốt nhất vào thời điểm đó trên FiQA (chấm điểm cảm xúc) và Financial PhraseBank, và cho biết mô hình vượt các phương pháp học máy trước đó dù dùng ít dữ liệu và chỉ tinh chỉnh một phần mô hình. Yang và cs. (2020) tiền huấn luyện một BERT khác (cũng tên FinBERT) trên văn bản giao tiếp tài chính và báo cáo vượt BERT miền tổng quát trên ba tác vụ phân loại cảm xúc tài chính; tác giả nói đây là BERT chuyên ngành tài chính đầu tiên được công bố. Mishev và cs. (2020) chạy hơn một trăm thí nghiệm trên các tập dữ liệu công khai do chuyên gia gán nhãn, đi từ từ điển tài chính đến Transformer; kết luận chính là biểu diễn theo ngữ cảnh vượt từ điển và bộ mã hóa cố định, còn Transformer rút gọn cho hiệu năng gần bản đầy đủ.
+Mishev và cs. (2020) chạy hơn một trăm thí nghiệm từ từ điển đến Transformer; kết luận chính là biểu diễn theo ngữ cảnh vượt từ điển và bộ mã hóa cố định, còn Transformer rút gọn cho hiệu năng gần bản đầy đủ.
 
-### 4.5. Mô hình ngôn ngữ lớn
+### 4.4. Mô hình ngôn ngữ lớn
 
-Cần phân biệt ba cách dùng LLM, vì không phải công trình LLM nào cũng là FSA theo nghĩa truyền thống:
+Có ba cách dùng LLM, cần tách bạch vì không phải công trình LLM nào cũng là FSA theo nghĩa truyền thống.
 
-1. **LLM làm bộ chấm điểm tin tức, dùng làm tín hiệu**: Lopez-Lira & Tang (2023) yêu cầu ChatGPT đánh giá tiêu đề là tốt/xấu/trung lập đối với giá cổ phiếu, rồi xét tương quan với lợi suất sau đó. Họ báo cáo tương quan dương có ý nghĩa thống kê, các mô hình cơ bản hơn (GPT-1, GPT-2, BERT) không dự báo được chính xác, khả năng dự báo cao nhất ở mô hình mạnh hơn (GPT-4), và rõ hơn ở cổ phiếu nhỏ. Tác giả chính lưu ý trong phỏng vấn rằng tương quan rất nhỏ dù có ý nghĩa thống kê.
-2. **LLM chuyên ngành tài chính**: BloombergGPT (Wu và cs., 2023) có 50 tỷ tham số, huấn luyện trên 363 tỷ token dữ liệu của Bloomberg cộng 345 tỷ token dữ liệu tổng quát; tác giả báo cáo vượt các mô hình cùng cỡ trên tác vụ tài chính. FinGPT (Yang và cs., 2023) theo hướng mã nguồn mở, nhấn mạnh quy trình dữ liệu và thích ứng nhẹ bằng LoRA.
-3. **Khảo sát LLM tài chính**: Nie và cs. (2024) xếp cảm xúc là một trong các nhóm ứng dụng, cùng với tác vụ ngôn ngữ, chuỗi thời gian, suy luận và tác tử, và nêu các vấn đề mở như thiên lệch nhìn trước, ràng buộc pháp lý, ô nhiễm dữ liệu và khả năng diễn giải.
+**(a) LLM làm bộ chấm điểm tin tức / tín hiệu giao dịch.** Lopez-Lira & Tang (2023) cho ChatGPT đánh giá tiêu đề với giá cổ phiếu; tương quan dương có ý nghĩa thống kê với lợi suất ngày kế tiếp, mô hình cơ bản (GPT-1, GPT-2, BERT) không dự báo chính xác, rõ hơn ở cổ phiếu nhỏ. Kirtac & Germano (2024) so sánh OPT, BERT, FinBERT và từ điển Loughran–McDonald trên 965.375 bài báo tài chính Mỹ (01/2010–06/2023): độ chính xác dự đoán cảm xúc lần lượt 74,4%, 72,5%, 72,2% và 50,1%; tỷ số Sharpe của chiến lược mua–bán là 3,05, 2,11, 2,07 và 1,23. Các con số này là backtest do tác giả công bố; cơ sở gán nhãn để tính "độ chính xác" tôi chưa xác minh.
 
-Công trình của Lopez-Lira & Tang thiên về dự báo lợi suất hơn là trích xuất cảm xúc thuần túy; BloombergGPT và FinGPT là mô hình nền đa tác vụ, trong đó cảm xúc chỉ là một tác vụ.
+**(b) Đánh giá LLM đa dụng so với FinBERT trên benchmark cảm xúc.** Li và cs. (2023) đánh giá ChatGPT và GPT-4 trên tám tập dữ liệu thuộc năm nhóm tác vụ tài chính, báo cáo cả điểm mạnh và hạn chế so với mô hình tinh chỉnh. Shen & Zhang (2024) kết luận GPT-4o với ví dụ few-shot "có thể ngang một FinBERT được tinh chỉnh tốt" trên tin tức, báo cáo và thông báo doanh nghiệp. Vamvourellis & Mehta (2025) so sánh GPT-4o, GPT-4.1 và o3-mini zero-shot với hai FinBERT trên Financial PhraseBank và thấy lập luận (reasoning) không cải thiện kết quả; cấu hình sát nhãn người nhất là GPT-4o không dùng chain-of-thought, và lập luận có thể gây "nghĩ quá mức" ở câu phức tạp hoặc câu có mức đồng thuận người gán nhãn thấp. Các kết luận này nhất quán ở chỗ LLM few-shot/zero-shot gần bằng mô hình tinh chỉnh chứ chưa vượt rõ trên benchmark cảm xúc.
 
-### 4.6. Phân tích so sánh
+**(c) LLM chuyên ngành và benchmark.** BloombergGPT (Wu và cs., 2023) có 50 tỷ tham số, huấn luyện trên 363 tỷ token dữ liệu Bloomberg và 345 tỷ token dữ liệu tổng quát. PIXIU (Xie và cs., 2023) gồm FinMA (LLaMA tinh chỉnh theo hướng dẫn), bộ dữ liệu hướng dẫn khoảng 136.000 mẫu và bộ đánh giá FLARE; Zhang và cs. (2023) đề xuất Instruct-FinGPT (LLaMA-7B tinh chỉnh theo hướng dẫn trên dữ liệu cảm xúc tài chính nhỏ); Yang và cs. (2023) đề xuất FinGPT mã nguồn mở với LoRA. FinBen (Xie và cs., 2024) gồm 36 tập dữ liệu thuộc 24 tác vụ; trên 15 LLM, các mô hình làm tốt trích xuất thông tin và phân tích văn bản nhưng yếu ở suy luận nâng cao, sinh văn bản và dự báo, còn tinh chỉnh theo hướng dẫn giúp phân tích văn bản nhưng ít lợi ở tác vụ phức tạp. Nie và cs. (2024) khảo sát cả mảng này và nêu các vấn đề mở như thiên lệch nhìn trước, ô nhiễm dữ liệu và khả năng diễn giải.
 
-| Công trình | Dữ liệu | Bài toán | Phương pháp | Đánh giá | Kết quả chính (theo tác giả) |
-|---|---|---|---|---|---|
-| Loughran & McDonald (2011) | 10-K, 1994–2008 | Đo giọng điệu văn bản | Từ điển tài chính | Liên hệ với kết quả tài chính | Từ điển chuyên ngành cần thiết, Harvard gán sai nhiều từ |
-| Das & Chen (2007) | Bài đăng bảng tin | Phân loại cảm xúc, chỉ số tổng hợp | Nhiều bộ phân loại, bỏ phiếu | Độ chính xác, dương tính giả | Ít dương tính giả hơn Bayes; gộp theo thời gian cải thiện chỉ số |
-| Malo và cs. (2014) | Tin kinh tế, Financial PhraseBank | Cảm xúc câu/cụm từ | Mô hình cấu trúc cụm từ + từ điển mở rộng | Phân loại (chỉ số chưa xác minh) | Ngữ cảnh cụm từ quan trọng |
-| Araci (2019) | Financial PhraseBank, FiQA | Phân loại và chấm điểm | FinBERT | Chưa xác minh chi tiết | Tiền huấn luyện miền tài chính hữu ích |
-| Yang và cs. (2020) | Ba tác vụ cảm xúc tài chính | Phân loại | FinBERT tiền huấn luyện trên văn bản giao tiếp tài chính | Chưa xác minh chi tiết | Vượt BERT tổng quát |
-| Mishev và cs. (2020) | Nhiều tập công khai | Phân loại | Từ điển → Transformer | So sánh hơn 100 thí nghiệm | Ngữ cảnh vượt từ điển; rút gọn gần bằng đầy đủ |
-| Ding và cs. (2015) | Tin Reuters, Bloomberg | Dự báo giá từ sự kiện | Tensor nơ-ron + CNN | Độ chính xác dự báo | Khoảng +6% so với baseline |
-| Lopez-Lira & Tang (2023) | Tiêu đề tin | Chấm điểm tin → lợi suất | ChatGPT/GPT-4 | Tương quan, lợi nhuận danh mục | Dương, nhỏ, rõ hơn ở cổ phiếu nhỏ |
+### 4.5. Phân tích so sánh
 
-Một số phân tích so sánh có thể rút ra, kèm giới hạn:
+| Công trình | Dữ liệu | Bài toán | Phương pháp | Kết quả chính (theo tác giả) |
+|---|---|---|---|---|
+| Loughran & McDonald (2011) | 10-K, 1994–2008 | Giọng điệu văn bản | Từ điển tài chính | Harvard gán sai nhiều từ; từ điển mới liên hệ tốt hơn với kết quả |
+| Malo và cs. (2014) | ~5.000 câu tin Phần Lan | Cảm xúc câu | LPS + từ điển mở rộng | Vượt đếm từ và mô hình chung |
+| Araci (2019) | PhraseBank, FiQA | Phân loại + chấm điểm | BERT + TRC2-financial | Acc 0,86 / F1 0,84 trên PhraseBank |
+| Yang và cs. (2020) | PhraseBank, AnalystTone, FiQA | Phân loại | BERT từ đầu, 4,9 tỷ token | Acc 0,844–0,887, hơn BERT chung |
+| Kirtac & Germano (2024) | 965.375 tin, 2010–2023 | Cảm xúc → lợi suất | OPT, BERT, FinBERT, LM | OPT cao nhất cả về độ chính xác và Sharpe |
+| Vamvourellis & Mehta (2025) | PhraseBank | Phân loại zero-shot | GPT-4o, 4.1, o3-mini vs FinBERT | Lập luận không giúp |
 
-- **Hai FinBERT khác nhau.** Araci (2019) tinh chỉnh BERT cho cảm xúc tài chính và đánh giá trên FiQA và Financial PhraseBank; Yang và cs. (2020) tiền huấn luyện BERT trên văn bản giao tiếp tài chính và đánh giá trên ba tác vụ cảm xúc. Hai công trình khác nhau về ngữ liệu và tác vụ đánh giá, nên không thể so điểm trực tiếp. Chi tiết về ngữ liệu tiền huấn luyện và chỉ số cần đối chiếu với bài gốc.
-- **Khi nào Transformer vượt từ điển?** Mishev và cs. (2020) cho thấy lợi thế của biểu diễn theo ngữ cảnh trên các tập có nhãn ở mức câu. Nhưng từ điển Loughran–McDonald được xây cho văn bản dài như 10-K và gắn trực tiếp với kết quả tài chính. Hai bối cảnh khác nhau, nên "Transformer thắng từ điển" chưa nên khái quát cho mọi nguồn dữ liệu và mọi mục tiêu.
-- **Mâu thuẫn tiềm năng.** Bollen và cs. (2011) báo cáo độ chính xác 87,6% khi dự đoán chiều biến động DJIA, trong khi Lopez-Lira & Tang (2023) mô tả tương quan rất nhỏ. Hai công trình khác dữ liệu, thời kỳ và thiết lập, nên không so trực tiếp được; điều đáng ghi nhận là tín hiệu dự báo thường yếu hơn khi kiểm định chặt hơn.
+Một số điểm rút ra:
+
+- **Hai FinBERT khác nhau về ngữ liệu và tác vụ.** Araci tiếp tục tiền huấn luyện BERT trên một tập tin tức nhỏ (~29 triệu từ); Yang và cs. tiền huấn luyện từ đầu trên báo cáo doanh nghiệp, họp báo kết quả và báo cáo phân tích (~4,9 tỷ token). Kích thước mẫu đánh giá cũng khác (PhraseBank 4.845 so với 4.840 câu; FiQA 1.174 so với 1.111 câu), nên không so điểm trực tiếp được.
+- **Khi nào Transformer vượt từ điển?** Mishev và cs. (2020) và Kirtac & Germano (2024) cho thấy mô hình theo ngữ cảnh vượt từ điển trên đánh giá cảm xúc ở mức câu/bài báo. Nhưng từ điển Loughran–McDonald được xây cho văn bản dài như 10-K và gắn với kết quả tài chính; độ chính xác 50,1% của nó trong Kirtac & Germano phụ thuộc vào cách gán nhãn tham chiếu, và Mục 2.1 cho thấy nhãn không đồng nhất.
+- **Tín hiệu dự báo yếu hơn khi kiểm định chặt hơn.** Bollen và cs. (2011) báo cáo độ chính xác 87,6% khi dự đoán chiều DJIA, còn Lopez-Lira & Tang mô tả tương quan rất nhỏ; hai bên khác dữ liệu và thiết lập nên không so trực tiếp.
 
 ---
 
@@ -149,145 +147,125 @@ Một số phân tích so sánh có thể rút ra, kèm giới hạn:
 
 ### 5.1. Nguồn dữ liệu và cảm xúc phụ thuộc nguồn
 
-| Nguồn | Công trình ví dụ | Đặc điểm | Vấn đề |
+| Nguồn | Ví dụ | Đặc điểm | Vấn đề |
 |---|---|---|---|
-| Báo cáo doanh nghiệp (10-K) | Loughran & McDonald (2011) | Ngôn ngữ chính thức, dài, nhiều thuật ngữ | Cảm xúc tinh tế, nhiều văn bản pháp lý lặp lại |
-| Tin tức | Tetlock (2007); Ding và cs. (2015); Lopez-Lira & Tang (2023) | Ngôn ngữ biên tập | Cảm xúc có thể không biểu hiện trực tiếp; độ trễ so với giá |
-| Bảng tin / mạng xã hội | Antweiler & Frank (2004); Das & Chen (2007); Bollen và cs. (2011) | Ngắn, chủ quan, tiếng lóng | Nhiễu, spam, khả năng thao túng |
-| Báo cáo phân tích, họp báo kết quả | Chưa có công trình được kiểm tra trong bài | – | Khoảng trống bằng chứng của bài này |
+| Báo cáo doanh nghiệp | 10-K (Loughran & McDonald, 2011) | Chính thức, dài | Cảm xúc tinh tế, nhiều văn bản lặp |
+| Tin tức | Tetlock (2007); Ding và cs. (2015); Kirtac & Germano (2024) | Biên tập | Cảm xúc không trực tiếp; độ trễ |
+| Bảng tin / mạng xã hội | Antweiler & Frank (2004); Das & Chen (2007); Bollen và cs. (2011) | Ngắn, chủ quan, tiếng lóng | Nhiễu, thao túng |
+| Báo cáo phân tích, họp báo kết quả | Yang và cs. (2020) dùng làm ngữ liệu tiền huấn luyện | Chuyên môn | Ít bộ nhãn công khai (trong tập đã xem) |
 
-Hệ quả: một mô hình huấn luyện trên Financial PhraseBank không mặc nhiên hoạt động tốt trên StockTwits hay báo cáo thường niên. Đó là vấn đề tổng quát hóa giữa các nguồn (cross-source generalization) và thích ứng miền. Trong số công trình đã kiểm tra, tôi chưa thấy công trình nào đánh giá trực tiếp vấn đề này; khẳng định "chưa ai làm" cần kiểm tra bằng tìm kiếm hệ thống.
+Một mô hình huấn luyện trên Financial PhraseBank không mặc nhiên tốt trên StockTwits hay báo cáo thường niên. Trong tập tài liệu đã xem tôi chưa thấy công trình đánh giá trực tiếp tổng quát hóa giữa các nguồn; khẳng định "chưa ai làm" cần kiểm tra bằng tìm kiếm hệ thống.
 
-### 5.2. Bộ dữ liệu chuẩn
+### 5.2. Bộ dữ liệu chuẩn và vấn đề tái lập
 
-- **Financial PhraseBank** (Malo và cs., 2014): khoảng 5.000 cụm từ/câu từ tin kinh tế, gán nhãn bởi chuyên gia tài chính (theo mô tả thứ cấp; cần đối chiếu số liệu và quy trình với bài gốc).
-- **FiQA** (Maia và cs., 2018): thử thách mở tại The Web Conference 2018 gồm phân tích cảm xúc theo khía cạnh và hỏi đáp dựa trên quan điểm. Dữ liệu thu thập từ StackExchange, Reddit và StockTwits giai đoạn 2009–2017. Một khảo sát (arXiv 2402.02315) mô tả phần FiQA-SA có 1.173 bài đăng từ tiêu đề và vi blog.
-
-Cả hai chủ yếu là tiếng Anh, quy mô nhỏ, nên điểm cao trên benchmark chưa chắc chuyển sang môi trường thực.
+- **Financial PhraseBank** (Malo và cs., 2014): khoảng 5.000 câu được lấy mẫu từ 53.400 câu trong 10.000 bài tin về các công ty niêm yết trên OMX Helsinki, gán nhãn theo góc nhìn nhà đầu tư. Các bài sau dùng số câu hơi khác nhau (4.845 trong Araci, 4.840 trong Yang và cs.), một dấu hiệu rằng phiên bản dữ liệu cần được ghi rõ khi so sánh.
+- **FiQA** (Maia và cs., 2018): thử thách mở tại The Web Conference 2018 về cảm xúc theo khía cạnh và hỏi đáp; dữ liệu từ StackExchange, Reddit và StockTwits (2009–2017). Số mẫu cảm xúc được báo cáo là 1.111, 1.173 hoặc 1.174 tùy bài.
+- **FinLin** (Daudert, 2020): corpus cảm xúc theo thực thể, đa nguồn, có điểm cảm xúc và liên quan.
+- **AnalystTone** (theo Yang và cs., 2020): 10.000 câu từ báo cáo phân tích (3.580 tích cực, 1.830 tiêu cực, 4.590 trung lập).
 
 ### 5.3. Gán nhãn và kiểm soát chất lượng
 
-Trong phạm vi tài liệu đã kiểm tra, thông tin cụ thể về quy trình gán nhãn rất hạn chế (Financial PhraseBank do chuyên gia gán nhãn; bộ CafeF tiếng Việt gán nhãn "với sự giúp đỡ của chuyên gia"). Vì vậy phần này chủ yếu đặt ra khung câu hỏi cần trả lời khi đánh giá một bộ dữ liệu, không khẳng định thực tế của từng bộ.
+Financial PhraseBank là trường hợp được ghi nhận chi tiết nhất (Malo và cs., 2014):
+- 16 người gán nhãn có kiến thức thị trường tài chính (3 nhà nghiên cứu, 13 sinh viên thạc sĩ Aalto), mỗi câu có 5–8 lượt gán, nhãn lấy theo đa số.
+- Trên tập con 150 câu do cả 16 người gán: đồng thuận cặp 74,9%; phân biệt tích cực–tiêu cực đạt 98,7%, tiêu cực–trung lập 94,2%, còn **tích cực–trung lập chỉ 75,2%**, tức là khó nhất.
+- Tập "đồng thuận 100%" có 2.259 câu (Malo; bản Hugging Face liệt kê 2.264), phân bố 13,4% tiêu cực, 61,4% trung lập, 25,2% tích cực; tập ">50%" có 4.840 câu.
 
-1. **Độ chi tiết**: gán nhãn ở mức câu, đoạn, bài hay thực thể?
-2. **Định nghĩa nhãn**: nhãn theo sắc thái người viết, theo thái độ nhà đầu tư, hay theo tác động kỳ vọng lên giá? (Đây là ba khái niệm ở Mục 2.1.) Ví dụ: "Công ty công bố giảm 20% chi phí vận hành" có thể là tích cực nếu xét hiệu quả kinh doanh, nhưng chưa chắc nếu xét sắc thái người viết hay phản ứng thị trường.
-3. **Chuyên môn người gán nhãn**: người thường hay chuyên gia tài chính?
-4. **Mức đồng thuận**: các người gán nhãn có đồng ý với nhau không? Chỉ số đồng thuận của từng bộ dữ liệu nêu trên chưa được xác minh trong bài này.
-
-Câu hỏi mở: có nên ép mỗi văn bản vào một nhãn duy nhất, hay biểu diễn bất đồng và độ bất định giữa người gán nhãn? Tôi chưa có bằng chứng thực nghiệm về mức bất đồng trong FSA, nên đây là hướng cần khảo sát, không phải kết luận.
+Ba hệ quả:
+1. **Nhãn mang giả định.** "Cảm xúc" ở đây là phán đoán về tác động tới nhà đầu tư, không thuần là sắc thái văn bản (Mục 2.1).
+2. **Chọn ngưỡng đồng thuận làm thay đổi bài toán.** Araci báo cáo 0,86 accuracy trên toàn bộ nhưng 0,97 trên tập đồng thuận 100%; chọn tập nào quyết định mức "chính xác".
+3. **Bất đồng không chỉ là nhiễu.** Vamvourellis & Mehta (2025) thấy suy luận của LLM kém hơn ở câu có mức đồng thuận thấp, gợi ý rằng bất đồng gắn với độ khó ngữ nghĩa thật. Trong tập đã xem, các bộ dữ liệu khác thường không công bố mức đồng thuận nên không so được. Câu hỏi nên ép một nhãn hay biểu diễn bất đồng vẫn còn mở.
 
 ### 5.4. Giao thức đánh giá
 
-Khung dưới đây là đề xuất tổ chức, không phải thống kê các công trình đã khảo sát:
+Khung dưới là đề xuất tổ chức của tôi, không phải thống kê từ các công trình:
 
-| Mục tiêu | Chỉ số / giao thức thường dùng |
+| Mục tiêu | Chỉ số |
 |---|---|
-| Phân loại cảm xúc | Accuracy, Macro-F1, Precision, Recall |
-| Chấm điểm cảm xúc (hồi quy) | MAE, RMSE, tương quan Pearson/Spearman |
-| Dự báo tài chính | Độ chính xác chiều, MAE, RMSE, Sharpe |
-| Đánh giá giao dịch | Lợi nhuận tích lũy, chi phí giao dịch, mức sụt giảm tối đa |
+| Phân loại | Accuracy, Macro-F1, Precision, Recall |
+| Chấm điểm | MAE, RMSE, tương quan Pearson/Spearman (FiQA: MSE, R² như trong Araci) |
+| Dự báo tài chính | Độ chính xác chiều, MAE, RMSE, Sharpe (Kirtac & Germano) |
+| Giao dịch | Lợi nhuận tích lũy, chi phí giao dịch, sụt giảm tối đa |
 
-Về cách chia dữ liệu: ngẫu nhiên, phân tầng, **theo thời gian**, walk-forward, và đánh giá ngoài miền. Chia theo thời gian đặc biệt quan trọng. Nếu huấn luyện trên dữ liệu muộn hơn kiểm thử, hoặc tin gần trùng lặp xuất hiện ở cả hai tập, kết quả không phản ánh khả năng triển khai. Điều này gắn trực tiếp với thiên lệch nhìn trước ở Mục 7. Các thiết lập đánh giá cụ thể của từng công trình trong bảng Mục 4.6 phần lớn chưa được xác minh từ toàn văn.
+Về chia dữ liệu: ngẫu nhiên, phân tầng, theo thời gian, walk-forward, ngoài miền. Chia theo thời gian đặc biệt quan trọng; huấn luyện trên dữ liệu muộn hơn kiểm thử hoặc để tin gần trùng lặp ở cả hai tập làm kết quả không phản ánh khả năng triển khai. Ví dụ trong tập đã xem: Araci dùng kiểm định chéo 10 lần trên FiQA trong khi các baseline dùng tập kiểm thử chính thức; Phong và cs. (2026) dùng kiểm định chéo 10 lần cho dự báo chiều VN-Index, một thiết lập dễ gây rò rỉ thời gian với chuỗi giá (nhận định của tôi, chưa kiểm tra chi tiết bài).
 
 ---
 
 ## 6. Ứng dụng
 
-Bài tách ứng dụng thành ba nhóm, vì mỗi nhóm trả lời một câu hỏi khác nhau và bằng chứng của nhóm này không suy ra nhóm kia.
-
 | Nhóm | Câu hỏi | Công trình ví dụ |
 |---|---|---|
 | **Đo lường cảm xúc** | Văn bản thể hiện tâm lý gì? | Loughran & McDonald (2011); Das & Chen (2007); Malo và cs. (2014) |
-| **Phân tích phản ứng thị trường** | Thị trường phản ứng thế nào với thông tin/cảm xúc? | Tetlock (2007); Antweiler & Frank (2004); Loughran & McDonald (2011) |
-| **Ứng dụng dự báo** | Cảm xúc có làm tín hiệu dự báo giá, biến động, giao dịch? | Bollen và cs. (2011); Ding và cs. (2015); Lopez-Lira & Tang (2023) |
+| **Phân tích phản ứng thị trường** | Thị trường phản ứng thế nào? | Tetlock (2007); Antweiler & Frank (2004); Vu và cs. (2023) |
+| **Dự báo / giao dịch** | Cảm xúc có làm tín hiệu dự báo? | Bollen và cs. (2011); Ding và cs. (2015); Lopez-Lira & Tang (2023); Kirtac & Germano (2024) |
 
-Các hệ quả logic:
-
-- Đo cảm xúc tốt không chứng minh cảm xúc dự báo được giá.
-- Tương quan giữa cảm xúc và lợi suất không chứng minh khả năng dự báo ngoài mẫu.
-- Dự báo được lợi suất không có nghĩa chiến lược giao dịch có lợi nhuận sau chi phí.
-
-**Về các con số hiệu năng đã nêu**, mỗi con số cần đọc kèm thiết lập:
-- Bollen và cs. (2011): độ chính xác 87,6% khi dự đoán chiều DJIA hằng ngày (số do tác giả công bố; mẫu và thiết lập đánh giá chưa được tôi xác minh từ toàn văn).
-- Ding và cs. (2015): cải thiện khoảng 6% so với baseline trên dữ liệu Reuters/Bloomberg; thiết lập cụ thể chưa xác minh.
-- Lopez-Lira & Tang (bản 2024): lợi nhuận bình quân ngày khoảng 9 điểm cơ bản ở vị thế mua và 29 điểm cơ bản ở vị thế bán, trong mẫu nghiên cứu của họ; chưa xác minh việc có tính đầy đủ chi phí giao dịch.
-
-Phần quản trị rủi ro và hỗ trợ ra quyết định hiện được thảo luận chủ yếu trong các khảo sát LLM (Nie và cs., 2024; Yang và cs., 2023). Tôi chưa có bằng chứng thực nghiệm đủ mạnh trong tập tài liệu đã kiểm tra.
+Hệ quả logic: đo cảm xúc tốt không chứng minh dự báo được giá; tương quan không chứng minh dự báo ngoài mẫu; dự báo được lợi suất không bảo đảm chiến lược có lãi sau chi phí. Một số con số cần đọc kèm thiết lập: 87,6% của Bollen và cs. (dự đoán chiều DJIA hằng ngày; mẫu chưa xác minh); khoảng 6% của Ding và cs. (so với baseline); 9 và 29 điểm cơ bản mỗi ngày (vị thế mua và bán) của Lopez-Lira & Tang (bản 2024); Sharpe 3,05 của Kirtac & Germano (backtest, 2010–2023). Quản trị rủi ro và tư vấn tự động chủ yếu được thảo luận trong các khảo sát LLM (Nie và cs., 2024), tôi chưa có bằng chứng thực nghiệm đủ mạnh.
 
 ---
 
 ## 7. Thách thức và vấn đề mở
 
-**(1) Thiên lệch nhìn trước và rò rỉ thời gian.** LLM được huấn luyện trên dữ liệu có thể đã chứa thông tin về diễn biến giá sau tin đang kiểm thử. Glasserman và Lin (2023) dùng GPT-3.5 trên tiêu đề tin của các công ty S&P 500, so sánh tiêu đề gốc với tiêu đề đã ẩn danh. Trong mẫu, phiên bản ẩn danh cho kết quả tốt hơn, và họ diễn giải rằng "hiệu ứng xao nhãng" (kiến thức chung về công ty làm nhiễu phán đoán) lấn át thiên lệch nhìn trước; ngoài mẫu thì thiên lệch nhìn trước không phải mối lo, dù sự xao nhãng vẫn có thể xảy ra. Đây là bản thảo arXiv, tôi chưa tìm thấy bản bình duyệt.
-
-**(2) Tái lập và chi phí.** BloombergGPT không công khai (theo bình luận trên trang Hugging Face, chưa xác minh nguồn chính thức), còn kết quả của API thương mại thay đổi theo phiên bản. Các hướng mở như FinGPT và Transformer rút gọn (Mishev và cs., 2020) là phương án giảm chi phí.
-
-**(3) Ý nghĩa kinh tế so với ý nghĩa thống kê.** Tương quan nhỏ nhưng có ý nghĩa thống kê (Lopez-Lira & Tang, 2023) và kết quả ấn tượng trên mẫu hẹp (Bollen và cs., 2011) cho thấy cần kiểm định ngoài mẫu, tính chi phí giao dịch và kiểm tra tính bền vững qua các giai đoạn thị trường.
-
-**(4) Cảm xúc không bằng tác động lên giá.** Ba bài toán cần tách: mô hình hiểu cảm xúc văn bản; mô hình đánh giá thông tin tốt hay xấu cho một doanh nghiệp; mô hình dự đoán phản ứng thực tế của thị trường. Chúng có quan hệ nhưng không đồng nhất, và thị trường còn phụ thuộc vào kỳ vọng trước đó và thông tin đã phản ánh vào giá.
-
-**(5) Tính chủ quan của nhãn.** Hai chuyên gia có thể diễn giải cùng một thông tin theo hai hướng (xem ví dụ doanh thu giảm nhưng biên lợi nhuận tăng ở Mục 3.2).
-
-**(6) Tính diễn giải.** Từ điển minh bạch nhưng thô; mô hình sâu chính xác hơn nhưng khó giải thích, điều quan trọng với tổ chức chịu yêu cầu tuân thủ.
-
-**(7) Độ tin cậy của LLM khi gán nhãn.** Tính ổn định, nhất quán và ảo giác khi LLM gán nhãn là câu hỏi hợp lý, nhưng trong tập tài liệu đã kiểm tra tôi chưa có công trình nào đo trực tiếp việc này (Glasserman & Lin, 2023, mô tả sự "quá tự tin" của GPT-3.5, là chi tiết liên quan duy nhất).
+1. **Thiên lệch nhìn trước.** LLM có thể đã thấy diễn biến giá sau tin. Glasserman và Lin (2023) dùng GPT-3.5 trên tiêu đề tin các công ty S&P 500 và so sánh bản gốc với bản ẩn danh: trong mẫu, bản ẩn danh tốt hơn, tức hiệu ứng xao nhãng lấn át thiên lệch nhìn trước; ngoài mẫu thiên lệch nhìn trước không phải mối lo (bản thảo arXiv, chưa xác minh bình duyệt). Điều này gợi ý các kết quả backtest LLM (như Kirtac & Germano, 2024, giai đoạn 2010–2023) cần được đọc cùng ngày cắt dữ liệu huấn luyện của mô hình.
+2. **Tái lập và chi phí.** Mô hình đóng hay API đổi phiên bản làm khó tái lập; FinGPT, FinMA và Transformer rút gọn là hướng giảm chi phí.
+3. **Ý nghĩa kinh tế so với thống kê.** Tương quan nhỏ nhưng có ý nghĩa thống kê (Lopez-Lira & Tang, 2023) và Sharpe cao trong backtest đều cần kiểm định ngoài mẫu và tính chi phí giao dịch.
+4. **Cảm xúc không bằng tác động lên giá.** Ba bài toán cần tách: hiểu cảm xúc văn bản; đánh giá tin tốt hay xấu cho doanh nghiệp; dự đoán phản ứng thị trường.
+5. **Tính chủ quan của nhãn.** Mức đồng thuận tích cực–trung lập chỉ 75,2% trong PhraseBank (Mục 5.3).
+6. **Diễn giải.** Từ điển minh bạch nhưng thô, mô hình sâu chính xác hơn nhưng khó giải thích.
+7. **Độ tin cậy của LLM khi gán nhãn.** Vamvourellis & Mehta (2025) cho thấy cấu hình prompt ảnh hưởng độ khớp nhãn người; tính ổn định giữa các lần chạy và ảo giác chưa được đo trực tiếp trong tập đã xem.
 
 ---
 
 ## 8. FSA tiếng Việt
 
-Phần này ghi nhận những gì đã tìm được; **bằng chứng hiện còn mỏng**, nên không đủ để khẳng định toàn bộ bức tranh FSA tiếng Việt. Mở rộng cần một đợt tìm kiếm có hệ thống riêng.
-
 ### 8.1. Bức tranh nghiên cứu
 
-Từ một lượt tìm kiếm, tôi ghi nhận ba nhóm công trình:
+Tôi kiểm tra được năm công trình (thư mục và tóm tắt/mô tả từ trang gốc) và gặp thêm một chương sách chưa xác minh được. Tất cả thuộc giai đoạn 2021–2026 và đều dùng tin tức hoặc tiêu đề báo, không có diễn đàn hay mạng xã hội.
 
-- Một nghiên cứu đăng trên *International Journal of Financial Studies* (2023, 11(3), 101) về cảm xúc trích xuất từ tin tức và phản ứng thị trường chứng khoán Việt Nam, dùng PhoBERT để phân loại. Theo mô tả tìm được, bộ huấn luyện gồm gần 40.000 bài từ các trang tài chính–kinh tế; kết quả là phản ứng giá tức thời nhỏ nhưng nhà đầu tư có xu hướng phản ứng thái quá với tin tốt và xấu. Danh sách tác giả và chi tiết phương pháp chưa xác minh.
-- Một nghiên cứu trong lĩnh vực ngân hàng xây dựng ngữ liệu 12.000 mẫu gán nhãn và tinh chỉnh PhoBERT, ViT5, BARTPho, báo cáo cải thiện độ chính xác 7,15% (theo mô tả tìm được).
-- Một bản thảo (nhắc đến trong kết quả tìm kiếm, chưa xác minh) dùng PhoBERT gán nhãn tin tài chính rồi kiểm định Granger và mô hình VAR ngưỡng với giá cổ phiếu một tập đoàn giai đoạn 2018–2023.
+| Công trình | Nguồn dữ liệu | Quy mô | Nhãn | Bài toán, mô hình | Kết quả (theo tác giả) |
+|---|---|---|---|---|---|
+| Tung và cs. (2021), CEUR Vol-3026 | Tiêu đề CafeF | 1.000 tiêu đề | 3 lớp: 187 tiêu cực, 248 không tác động, 565 tích cực; "có sự giúp đỡ của chuyên gia" | Phân loại, PhoBERT; thay thực thể bằng token giữ chỗ | Accuracy tới 93% (không có chỉ số từng lớp) |
+| Vu và cs. (2023), IJFS 11(3), 101 | Web tài chính–kinh tế | Gần 40.000 bài huấn luyện | Chưa xác minh | Phân loại, PhoBERT; kiểm định phản ứng thị trường | Accuracy trên 81%; không khác biệt đáng kể về giá sau tin, nhưng tin tiêu cực làm đổi phương sai lợi suất |
+| Thanh và cs. (2025), VNUHCM JELB 9(1) | VnExpress, VnEconomy, 2024 | 5.126 câu gán nhãn (từ 4.065 bài, 7.130 câu trích) | Nhị phân, chuyên gia trên 20 năm kinh nghiệm, không báo số người gán nhãn hay mức đồng thuận | Ngân hàng câu cảm xúc về khối ngoại; embedding + LR/SVM/RF | SVM accuracy 89% |
+| Phong và cs. (2026), VNUHCM JELB 10(1) | Vietnamnet, 2019–2025 | 6.480 bài | Đặc trưng cực tính, chủ quan, điểm tổng hợp (công cụ không nêu rõ) | Dự báo chiều VN-Index; nhiều mô hình học máy | Mô hình tổ hợp tốt nhất; đặc trưng cảm xúc bổ sung giá trị dự báo |
+| Việt và cs. (2026), JCSC 42(2) | Tin tức ngân hàng | 12.000 mẫu gán nhãn | Chưa xác minh | Phân loại chủ đề và cảm xúc; PhoBERT, ViT5, BARTPho so với LLaMA-3.1-8B, Vistral-7B | Mô hình tinh chỉnh hơn LLM đa dụng về độ chính xác và hiệu quả tính toán |
+| Chương sách Springer về dự báo khó khăn tài chính | Tin tức | – | – | Điểm cảm xúc từ vinai/phobert-base (theo kết quả tìm kiếm) | Chưa xác minh (nội dung truy cập hạn chế) |
 
-Thị trường/lĩnh vực: chứng khoán và ngân hàng. Bài toán: chủ yếu phân loại cảm xúc ba lớp và liên hệ với giá.
+Về chi tiết: có một mâu thuẫn nhỏ về Vu và cs. (2023): tóm tắt trên Crossref nói huấn luyện PhoBERT trên gần 40.000 bài, trong khi một tóm tắt thứ cấp nêu 2.738 bài gán nhãn dương/âm; có thể 2.738 là tập có nhãn còn 40.000 là ngữ liệu, nhưng tôi chưa xác minh. Thanh và cs. (2025) cũng không giải thích vì sao 7.130 câu còn 5.126, và tóm tắt nói tám nhóm hành vi nhưng phần phương pháp liệt kê bảy.
+
+Thị trường và lĩnh vực: chứng khoán (VN-Index, VN30, HNX30) và ngân hàng. Bài toán: phần lớn là phân loại hai hoặc ba lớp; hai công trình liên hệ cảm xúc với giá (Vu và cs., Phong và cs.).
 
 ### 8.2. Bộ dữ liệu tiếng Việt
 
-| Bộ dữ liệu | Nguồn | Quy mô | Nhãn | Công khai? | Thông tin còn thiếu |
-|---|---|---|---|---|---|
-| Tiêu đề CafeF (GitHub, 209sontung) | CafeF.vn | 1.000 tiêu đề | 3 lớp: 187 tiêu cực, 248 không tác động, 565 tích cực | Có (kho GitHub) | Thời gian thu thập, quy trình gán nhãn, đồng thuận |
-| Ngữ liệu IJFS (2023) | Trang tài chính–kinh tế | Gần 40.000 bài (bộ huấn luyện) | Chưa xác minh | Chưa xác nhận | Có gán nhãn không; cách gán nhãn |
-| Ngữ liệu ngân hàng (VJS) | Lĩnh vực ngân hàng | 12.000 mẫu | Có gán nhãn | Dường như chưa công khai | Nguồn, nhãn, đơn vị gán nhãn |
+| Bộ dữ liệu | Quy mô | Nhãn | Công khai? | Thông tin còn thiếu |
+|---|---|---|---|---|
+| Tiêu đề CafeF (Tung và cs., 2021) | 1.000 | 3 lớp, mất cân bằng (56,5% tích cực) | Có (GitHub, không nêu giấy phép; không nêu giai đoạn thu thập) | Quy trình gán nhãn, đồng thuận |
+| Ngân hàng câu khối ngoại (Thanh và cs., 2025) | 5.126 | Nhị phân | Chưa xác nhận (bài ghi có phụ lục mã) | Số người gán nhãn, đồng thuận, nhãn trung lập |
+| Ngữ liệu Vu và cs. (2023) | ~40.000 bài | Chưa xác minh | Chưa xác nhận | Nhãn, công khai |
+| Ngữ liệu ngân hàng (Việt và cs., 2026) | 12.000 | Có | Chưa xác nhận | Nguồn, nhãn |
 
-Bộ CafeF mất cân bằng lớp (khoảng 56,5% tích cực), và độ chính xác 93% là số tự báo cáo trên bộ nhỏ, nên không thể xem là benchmark.
+So với Financial PhraseBank (nhãn ba lớp, 16 người gán nhãn, 5–8 lượt gán mỗi câu, báo cáo đồng thuận), chưa bộ tiếng Việt nào tôi tìm thấy công bố quy trình tương đương. Thanh và cs. (2025) dùng nhãn nhị phân nên không có lớp trung lập; ở PhraseBank trung lập chiếm khoảng 60% và là lớp gây bất đồng nhiều nhất, nên kết quả hai bộ không so trực tiếp được. Tôi cũng thấy một mô hình PhoBERT trên Hugging Face được tinh chỉnh bằng nhãn "bạc" do LLM sinh (không phải gán nhãn người) và không có chỉ số đánh giá; đó là thông tin từ model card, không phải nghiên cứu được đánh giá.
 
-### 8.3. Thách thức đặc thù ngôn ngữ (giả thuyết cần kiểm chứng)
+### 8.3. Thách thức đặc thù ngôn ngữ
 
-Các điểm sau là câu hỏi cần khảo sát. Tôi chưa có bài nào để khẳng định chúng thực sự là khó khăn đặc thù của tiếng Việt, nên không nêu như sự thật:
-
-- Từ ghép và phân đoạn từ ảnh hưởng thế nào đến bộ tách từ.
-- Từ đa nghĩa trong ngữ cảnh tài chính.
-- Thuật ngữ tài chính Việt–Anh và trộn mã (code-switching).
-- Viết tắt, mã chứng khoán và tên doanh nghiệp.
-- Tiếng lóng trên diễn đàn chứng khoán.
-- Phủ định, mỉa mai và diễn đạt gián tiếp.
+Bằng chứng trực tiếp trong tập đã xem chỉ có hai điểm: PhoBERT đòi hỏi văn bản phải được tách từ trước khi tách token (Nguyen & Nguyen, 2020), và Tung và cs. (2021) dùng VnCoreNLP để tách từ và nhận diện thực thể. Các điểm sau chỉ là câu hỏi cần khảo sát, chưa có bài nào được kiểm tra để khẳng định đó là khó khăn đặc thù tiếng Việt: từ ghép và tách từ ảnh hưởng thế nào đến chất lượng; từ đa nghĩa trong ngữ cảnh tài chính; trộn mã Việt–Anh; viết tắt, mã chứng khoán và tên doanh nghiệp; tiếng lóng diễn đàn; phủ định và mỉa mai.
 
 ### 8.4. Các mô hình đã được nghiên cứu
 
-| Mô hình | Có bằng chứng trong bài này? |
+| Mô hình | Bằng chứng |
 |---|---|
-| PhoBERT | Có (nghiên cứu IJFS 2023; nghiên cứu ngân hàng; bản thảo) |
-| ViT5, BARTPho | Có (nghiên cứu ngân hàng) |
-| ML truyền thống với TF-IDF | Chưa có |
-| XLM-R, mBERT | Chưa có |
-| LLM với prompt tài chính | Chưa có |
+| PhoBERT | Có (Tung và cs., 2021; Vu và cs., 2023; Việt và cs., 2026) |
+| ViT5, BARTPho | Có (Việt và cs., 2026) |
+| ML truyền thống | Có: embedding + LR/SVM/RF (Thanh và cs., 2025); mô hình tổ hợp trên đặc trưng cảm xúc (Phong và cs., 2026) |
+| LLM đa dụng | Có, làm baseline: LLaMA-3.1-8B, Vistral-7B (Việt và cs., 2026) |
+| XLM-R, mBERT | Chưa thấy (PhoBERT được báo cáo vượt XLM-R trên các tác vụ NLP chung, nhưng không phải tài chính) |
+| LLM với prompt tài chính (kiểu GPT-4o few-shot) | Chưa thấy trong tiếng Việt |
 
-"Chưa có" nghĩa là tôi chưa tìm thấy trong lượt tìm kiếm này, chứ không có nghĩa là chưa ai nghiên cứu.
+"Chưa thấy" nghĩa là tôi chưa tìm thấy, không phải chưa ai nghiên cứu. Hướng tiếng Việt thiên về mô hình tinh chỉnh dựa trên PhoBERT, trong khi nghiên cứu quốc tế (Mục 4.4) đã chuyển sang so sánh LLM few-shot với FinBERT.
 
-### 8.5. Ứng dụng
+### 8.5. Ứng dụng và so sánh với FSA toàn cầu
 
-Các ứng dụng đã thấy: liên hệ cảm xúc tin tức với phản ứng giá. Các hướng như cảm xúc theo doanh nghiệp hoặc ngành, phân tích theo sự kiện, chỉ số tâm lý thị trường, cảm xúc khách hàng ngân hàng, dự báo lợi suất và biến động chưa có bằng chứng cụ thể trong bài, và là phần cần tìm hiểu để đánh giá liệu nghiên cứu tiếng Việt có tập trung quá nhiều vào phân loại mà chưa khai thác ứng dụng downstream.
+Ứng dụng đã thấy: phản ứng thị trường quanh tin (Vu và cs., 2023), dự báo chiều VN-Index (Phong và cs., 2026), tổng hợp tin ngân hàng (Việt và cs., 2026). Chưa thấy: cảm xúc theo doanh nghiệp hoặc ngành, theo sự kiện, chỉ số tâm lý thị trường, dự báo biến động.
 
-### 8.6. So với FSA toàn cầu
-
-So với tiếng Anh, tập tài liệu tiếng Việt đã tìm được nhỏ hơn nhiều và thiếu một benchmark công khai có quy trình gán nhãn rõ ràng như Financial PhraseBank. Nhận định này giới hạn trong lượt tìm kiếm của bài.
+So với toàn cầu, FSA tiếng Việt (i) mới từ khoảng 2021 trở đi; (ii) chỉ dùng văn bản tin tức; (iii) thiếu benchmark chung và đồng thuận gán nhãn công bố; (iv) chưa có bài kiểm tra tổng quát hóa giữa nguồn hay giữa giai đoạn; (v) chưa thấy LLM dùng làm bộ phân loại với prompt tài chính. Nhận định này giới hạn trong các tìm kiếm của bài.
 
 ---
 
@@ -295,22 +273,22 @@ So với tiếng Anh, tập tài liệu tiếng Việt đã tìm được nhỏ 
 
 | Khoảng trống | Vấn đề chưa giải quyết | Bằng chứng trong bài | Tiềm năng với tiếng Việt |
 |---|---|---|---|
-| Tổng quát hóa giữa các nguồn | Mô hình có chuyển được giữa tin tức, báo cáo và mạng xã hội không? | Chưa thấy công trình đánh giá trực tiếp (Mục 5.1) | Cao |
-| Độ bền theo thời gian | Mô hình có ổn định qua các giai đoạn thị trường không? | Gián tiếp qua Mục 7(1), 7(3) | Cao |
-| Cảm xúc chi tiết | Phân cực ba lớp có đủ không? | Bollen và cs. (2011) dùng đa chiều, nhưng ngoài tài chính thuần | Trung bình |
-| Cảm xúc theo đối tượng/khía cạnh | Cảm xúc hướng đến thực thể nào? | FiQA nhắm ABSA; chưa thấy kết quả tiếng Việt | Cao |
-| Bất đồng khi gán nhãn | Cảm xúc tài chính có nhất quán giữa người gán nhãn không? | Chưa có dữ liệu thực nghiệm (Mục 5.3) | Cao |
-| Cảm xúc văn bản so với tác động thị trường | Cảm xúc ngôn ngữ có phản ánh tác động kinh tế không? | Mục 2.1, 7(4) | Cao |
-| Độ tin cậy của LLM | LLM có nhất quán, ít ảo giác khi gán nhãn không? | Rất ít (Mục 7(7)) | Trung bình |
-| Đánh giá không rò rỉ thời gian | Backtest LLM không bị nhìn trước | Glasserman & Lin (2023) | Cao |
+| Tổng quát hóa giữa nguồn | Mô hình có chuyển từ tin tức sang diễn đàn, báo cáo không? | Chưa thấy đánh giá trực tiếp (5.1); tiếng Việt chỉ có tin tức (8.1) | Cao |
+| Độ bền theo thời gian | Ổn định qua các giai đoạn? | Gián tiếp (7.1, 7.3); kiểm định chéo ngẫu nhiên cho chuỗi giá (5.4) | Cao |
+| Cảm xúc theo thực thể và khía cạnh | Cảm xúc hướng đến thực thể nào? | FinLin; FiQA nhắm ABSA; tiếng Việt thay thực thể bằng token giữ chỗ (3.2) | Cao |
+| Bất đồng khi gán nhãn | Cảm xúc tài chính có nhất quán? | Có số liệu cho PhraseBank (5.3); tiếng Việt chưa công bố | Cao |
+| Cảm xúc văn bản so với tác động thị trường | Có phản ánh tác động kinh tế? | 2.1, 7.4 | Cao |
+| LLM few-shot so với mô hình tinh chỉnh | LLM có thay được mô hình tinh chỉnh trên tiếng Việt? | Quốc tế: gần bằng (4.4); tiếng Việt: chỉ có baseline (8.4) | Cao |
+| Đánh giá không rò rỉ thời gian | Backtest LLM không nhìn trước | Glasserman & Lin (2023) | Cao |
+| Độ tin cậy của LLM | Nhất quán, ít ảo giác? | Rất ít (7.7) | Trung bình |
 
-Hai hướng cần ưu tiên trước khi đo bằng mô hình: (1) xây benchmark tiếng Việt công khai, có hướng dẫn gán nhãn và mức đồng thuận, và (2) tách rõ nhãn cảm xúc văn bản với nhãn tác động lên giá. Các hướng về mô hình nhẹ và đa phương thức đáng làm nhưng cần xuất phát từ khoảng trống bằng chứng chứ không từ giải pháp kỹ thuật.
+Hai ưu tiên: (1) xây benchmark tiếng Việt công khai với ba lớp (có trung lập), hướng dẫn gán nhãn, nhiều người gán nhãn và đồng thuận được báo cáo, đủ nhiều nguồn để đo tổng quát hóa; (2) tách rõ nhãn cảm xúc văn bản với nhãn tác động lên giá. Hướng về mô hình nhẹ và đa phương thức đáng làm nhưng cần xuất phát từ các khoảng trống bằng chứng trên.
 
 ---
 
 ## 10. Kết luận
 
-Hai thập kỷ qua, FSA đi từ đếm từ trong từ điển, qua học máy và học sâu, đến Transformer chuyên ngành và LLM. Điểm cốt lõi của bài không nằm ở thứ tự thời gian đó, mà ở việc FSA gồm nhiều bài toán và nhiều loại nhãn, và các mục tiêu đo cảm xúc, phân tích phản ứng thị trường và dự báo cần được tách bạch. Bằng chứng về khả năng dự báo thị trường nhìn chung dương nhưng khiêm tốn, chủ yếu từ mẫu hạn chế và tiếng Anh. Với tiếng Việt, nhu cầu cấp thiết nhất là dữ liệu chuẩn mở, quy trình gán nhãn minh bạch và đánh giá chặt chẽ.
+FSA đã đi từ đếm từ trong từ điển, qua học máy và học sâu, đến Transformer chuyên ngành và LLM. Điểm cốt lõi không nằm ở thứ tự thời gian mà ở việc FSA gồm nhiều bài toán và nhiều loại nhãn, và các mục tiêu đo cảm xúc, phân tích phản ứng thị trường và dự báo cần được tách bạch. Trên benchmark cảm xúc, LLM few-shot hiện gần bằng FinBERT tinh chỉnh chứ chưa vượt rõ; bằng chứng về dự báo thị trường nhìn chung dương nhưng cần kiểm định chặt hơn, đặc biệt về thiên lệch nhìn trước. Với tiếng Việt, đã có các bước đi đầu với PhoBERT và một ngân hàng câu cảm xúc nhị phân, nhưng nhu cầu cấp thiết nhất vẫn là dữ liệu chuẩn mở, quy trình gán nhãn minh bạch và đánh giá có kiểm soát thời gian.
 
 ---
 
@@ -322,13 +300,19 @@ Araci, D. (2019). *FinBERT: Financial sentiment analysis with pre-trained langua
 
 Bollen, J., Mao, H., & Zeng, X. (2011). Twitter mood predicts the stock market. *Journal of Computational Science, 2*(1), 1–8. (Bản tiền ấn: arXiv:1010.3003)
 
+Daudert, T. (2020). *A multi-source entity-level sentiment corpus for the financial domain: The FinLin corpus*. arXiv:2003.04073. https://arxiv.org/abs/2003.04073
+
 Das, S. R., & Chen, M. Y. (2007). Yahoo! for Amazon: Sentiment extraction from small talk on the web. *Management Science, 53*(9), 1375–1388. https://doi.org/10.1287/mnsc.1070.0704
 
-Ding, X., Zhang, Y., Liu, T., & Duan, J. (2015). Deep learning for event-driven stock prediction. *Proceedings of the 24th International Joint Conference on Artificial Intelligence (IJCAI)*, 2327–2333.
+Ding, X., Zhang, Y., Liu, T., & Duan, J. (2015). Deep learning for event-driven stock prediction. *Proceedings of IJCAI 2015*, 2327–2333.
 
 Glasserman, P., & Lin, C. (2023). *Assessing look-ahead bias in stock return predictions generated by GPT sentiment analysis*. arXiv:2309.17322. https://arxiv.org/abs/2309.17322
 
 Kearney, C., & Liu, S. (2014). Textual sentiment in finance: A survey of methods and models. *International Review of Financial Analysis, 33*, 171–185. https://doi.org/10.1016/j.irfa.2014.02.006
+
+Kirtac, K., & Germano, G. (2024). Sentiment trading with large language models. *Finance Research Letters, 62*, 105227. (Bản tiền ấn: arXiv:2412.19245)
+
+Li, X., Chan, S., Zhu, X., Pei, Y., Ma, Z., Liu, X., & Shah, S. (2023). Are ChatGPT and GPT-4 general-purpose solvers for financial text analytics? A study on several typical tasks. *EMNLP 2023 Industry Track*. arXiv:2305.05862. https://arxiv.org/abs/2305.05862
 
 Lopez-Lira, A., & Tang, Y. (2023). *Can ChatGPT forecast stock price movements? Return predictability and large language models*. arXiv:2304.07619. https://arxiv.org/abs/2304.07619
 
@@ -342,11 +326,31 @@ Malo, P., Sinha, A., Korhonen, P., Wallenius, J., & Takala, P. (2014). Good debt
 
 Mishev, K., Gjorgjevikj, A., Vodenska, I., Chitkushev, L. T., & Trajanov, D. (2020). Evaluation of sentiment analysis in finance: From lexicons to transformers. *IEEE Access, 8*, 131662–131682. https://doi.org/10.1109/ACCESS.2020.3009626
 
-Nie, Y., et al. (2024). *A survey of large language models for financial applications: Progress, prospects and challenges*. arXiv:2406.11903. https://arxiv.org/abs/2406.11903 *(danh sách tác giả đầy đủ cần bổ sung từ bài gốc)*
+Nguyen, D. Q., & Nguyen, A. T. (2020). PhoBERT: Pre-trained language models for Vietnamese. *Findings of EMNLP 2020*. arXiv:2003.00744. https://arxiv.org/abs/2003.00744
+
+Nie, Y., Kong, Y., Dong, X., Mulvey, J. M., Poor, H. V., Wen, Q., & Zohren, S. (2024). *A survey of large language models for financial applications: Progress, prospects and challenges*. arXiv:2406.11903. https://arxiv.org/abs/2406.11903
+
+Phong, N. A., Phan Huy, T., & Ngo Phu, T. (2026). Sentiment-driven forecasting of the stock index in Vietnam: A machine learning perspective. *VNUHCM Journal of Economics, Business and Law, 10*(1), 6410–6424. https://doi.org/10.32508/stdjelm.v10i1.1687
+
+Shen, Y., & Zhang, P. K. (2024). *Financial sentiment analysis on news and reports using large language models and FinBERT*. arXiv:2410.01987. https://arxiv.org/abs/2410.01987
 
 Tetlock, P. C. (2007). Giving content to investor sentiment: The role of media in the stock market. *The Journal of Finance, 62*(3), 1139–1168. https://doi.org/10.1111/j.1540-6261.2007.01232.x
 
-Wu, S., Irsoy, O., Lu, S., et al. (2023). *BloombergGPT: A large language model for finance*. arXiv:2303.17564. https://arxiv.org/abs/2303.17564 *(bổ sung đủ tác giả theo bài gốc)*
+Thanh, X. P. T., Anh, N. D., & Ha, P. T. (2025). Building a financial sentiment bank on the investment behavior of foreign investors [Ngân hàng câu cảm xúc tài chính về hành vi của khối ngoại]. *VNUHCM Journal of Economics, Business and Law, 9*(1), 6103–6112. https://doi.org/10.32508/stdjelm.v9i1.1548 *(thứ tự tên theo trang tạp chí: Xuan Pham Thi Thanh, Nhu Dang Anh, Phuc Tu Ha; cần chuẩn hóa họ–tên khi nộp)*
+
+Tung, N. S., Long, N. N., Tran, T., Thao, N. T., Phuong, D. T. T., & Nguyen, T. (2021). Stock article title sentiment-based classification using PhoBERT. *Proceedings of the 2nd International Conference on Human-centered Artificial Intelligence (Computing4Human 2021)*, CEUR Workshop Proceedings, Vol. 3026, 225–233. https://ceur-ws.org/Vol-3026/paper25.pdf
+
+Vamvourellis, D., & Mehta, D. (2025). *Reasoning or overthinking: Evaluating large language models on financial sentiment analysis*. arXiv:2506.04574. https://arxiv.org/abs/2506.04574
+
+Việt, A. P., Minh, H. P., Quoc, H. N., Duc, A. N., & Hai, L. T. (2026). Fine-tuned language models for intelligent aggregation systems in the banking sector. *Journal of Computer Science and Cybernetics, 42*(2), 167–181. https://vjs.ac.vn/jcc/article/view/22428 *(họ–tên theo trang tạp chí, cần chuẩn hóa)*
+
+Vu, L. T., Pham, D. N., Kieu, H. T., & Pham, T. T. T. (2023). Sentiments extracted from news and stock market reactions in Vietnam. *International Journal of Financial Studies, 11*(3), 101. https://doi.org/10.3390/ijfs11030101
+
+Wu, S., Irsoy, O., Lu, S., Dabravolski, V., Dredze, M., Gehrmann, S., Kambadur, P., Rosenberg, D., & Mann, G. (2023). *BloombergGPT: A large language model for finance*. arXiv:2303.17564. https://arxiv.org/abs/2303.17564
+
+Xie, Q., Han, W., Zhang, X., Lai, Y., Peng, M., Lopez-Lira, A., & Huang, J. (2023). *PIXIU: A large language model, instruction data and evaluation benchmark for finance*. arXiv:2306.05443. https://arxiv.org/abs/2306.05443
+
+Xie, Q., Han, W., Chen, Z., Xiang, R., Zhang, X., He, Y., et al. (2024). *FinBen: A holistic financial benchmark for large language models*. arXiv:2402.12659. https://arxiv.org/abs/2402.12659
 
 Xing, F. Z., Cambria, E., & Welsch, R. E. (2018). Natural language based financial forecasting: A survey. *Artificial Intelligence Review, 50*(1), 49–73. https://doi.org/10.1007/s10462-017-9588-9
 
@@ -354,18 +358,13 @@ Yang, H., Liu, X.-Y., & Wang, C. D. (2023). *FinGPT: Open-source financial large
 
 Yang, Y., Uy, M. C. S., & Huang, A. (2020). *FinBERT: A pretrained language model for financial communications*. arXiv:2006.08097. https://arxiv.org/abs/2006.08097
 
-*Nguồn tiếng Việt / thị trường Việt Nam (cần xác minh trước khi trích chính thức):*
-
-- [Tác giả cần xác minh]. (2023). Sentiments extracted from news and stock market reactions in Vietnam. *International Journal of Financial Studies, 11*(3), 101.
-- 209sontung. (không rõ năm). *Vietnamese stock article classification* [Kho mã nguồn GitHub]. https://github.com/209sontung/Vietnamese-stock-article-classification
-- Nghiên cứu tinh chỉnh PhoBERT/ViT5/BARTPho cho lĩnh vực ngân hàng, *Vietnam Journal of Science (VJS)*. [Tên, tác giả, năm cần xác minh]
-- Bản thảo dùng PhoBERT và kiểm định Granger/VAR ngưỡng với giá cổ phiếu 2018–2023. [Nguồn, tác giả, tình trạng bình duyệt cần xác minh]
+Zhang, B., Yang, H., & Liu, X.-Y. (2023). *Instruct-FinGPT: Financial sentiment analysis by instruction tuning of general-purpose large language models*. arXiv:2306.12659. https://arxiv.org/abs/2306.12659
 
 ---
 
 ## Ghi chú về độ tin cậy và việc còn lại
 
-- Thông tin thư mục các bài chính đã được đối chiếu với trang kho lưu trữ hoặc cơ sở dữ liệu, nhưng **chưa đọc toàn văn** hầu hết các bài. Số liệu là số do tác giả công bố.
-- Taxonomy ở Mục 3 là cách đọc của tôi từ tóm tắt; cần đối chiếu từng công trình với toàn văn trước khi dùng chính thức. Hàng "lập trường" và "báo cáo phân tích/họp báo kết quả" ghi nhận chỗ chưa có công trình nào được kiểm tra, không phải kết luận rằng chưa có nghiên cứu.
-- Chưa thực hiện: truy vấn có hệ thống trên các cơ sở dữ liệu học thuật, sơ đồ sàng lọc, khảo sát nghiên cứu 2024 trở đi, và khảo sát đầy đủ FSA tiếng Việt (Mục 8).
-- Các mục "cần xác minh" ở phần tài liệu tham khảo cần được bổ sung trước khi nộp hoặc đăng.
+- Mức xác minh từng công trình được nêu ở Mục 1.4. Các con số là số do tác giả công bố; thông tin Nhóm A được trích từ trang bài hoặc bản HTML qua công cụ đọc trang chứ không phải tôi đọc trực tiếp PDF.
+- Mục 3 (taxonomy) là cách đọc của tôi; hàng "lập trường" và "báo cáo phân tích/họp báo" ghi nhận chỗ chưa có công trình trong tập đã xem, không phải kết luận rằng chưa có nghiên cứu.
+- Chương sách Springer về dự báo khó khăn tài chính ở Mục 8.1 chưa có tác giả/tiêu đề đầy đủ nên không đưa vào danh mục tham khảo.
+- Vẫn chưa làm: truy vấn có hệ thống trên Scopus/WoS/IEEE/ACM; sơ đồ sàng lọc; khảo sát đầy đủ LLM 2025–2026; đọc trực tiếp toàn văn PDF các bài Nhóm B; xác minh mâu thuẫn 40.000 so với 2.738 bài của Vu và cs. (2023).
